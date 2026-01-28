@@ -1,81 +1,83 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { getKeys, hasKeys } from '../utils/storage'
-import { apiRequest } from '../utils/api'
-import { getInitials, formatDate } from '../utils/formatting'
-import { useToast } from '../hooks/useToast'
-import { ToastContainer } from '../components/Toast'
-import './OrgsPage.css'
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getKeys, hasKeys } from "../utils/storage";
+import { getInitials, formatDate } from "../utils/formatting";
+import { useToast } from "../hooks/useToast";
+import { ToastContainer } from "../components/Toast";
+import "./OrgsPage.css";
 
 interface Group {
-  id: number
-  name: string
-  uuid: string
+  id: number;
+  name: string;
+  uuid: string;
   avatar?: {
-    thumbnail_url?: string
-  }
-  description?: string
-  created_at?: string
-  updated_at?: string
-  last_message_created_at?: string
+    thumbnail_url?: string;
+  };
+  description?: string;
+  created_at?: string;
+  updated_at?: string;
+  last_message_created_at?: string;
 }
 
 function OrgsPage() {
-  const navigate = useNavigate()
-  const { toasts, showToast, removeToast } = useToast()
-  const [groups, setGroups] = useState<Group[]>([])
-  const [loading, setLoading] = useState(true)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
-  const [totalCount, setTotalCount] = useState(0)
+  const navigate = useNavigate();
+  const { toasts, showToast, removeToast } = useToast();
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     if (!hasKeys()) {
-      navigate('/')
-      return
+      navigate("/");
+      return;
     }
 
-    fetchGroups(currentPage)
-  }, [currentPage, navigate])
+    fetchGroups(currentPage);
+  }, [currentPage, navigate]);
 
   const fetchGroups = async (page: number) => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const keys = getKeys()
+      const keys = getKeys();
       if (!keys) {
-        throw new Error('API keys not found')
+        throw new Error("API keys not found");
       }
 
-      const response = await fetch(`/api/groups?page=${page}&status=active&user_id=${keys.ictlifeUserId}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-OpenAI-Key': keys.openaiKey,
-          'X-ICTLife-Key': keys.ictlifeKey,
-          'X-ICTLife-User-Id': keys.ictlifeUserId,
+      const response = await fetch(
+        `/api/groups?page=${page}&status=active&user_id=${keys.ictlifeUserId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-OpenAI-Key": keys.openaiKey,
+            "X-ICTLife-Key": keys.ictlifeKey,
+            "X-ICTLife-User-Id": keys.ictlifeUserId,
+          },
         },
-      })
+      );
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to fetch groups')
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to fetch groups");
       }
 
-      const data = await response.json()
-      setGroups(data.groups || [])
-      setTotalCount(data.pagination?.count || 0)
-      const perPage = data.pagination?.per || 20
-      setTotalPages(Math.ceil((data.pagination?.count || 0) / perPage))
+      const data = await response.json();
+      setGroups(data.groups || []);
+      setTotalCount(data.pagination?.count || 0);
+      const perPage = data.pagination?.per || 20;
+      setTotalPages(Math.ceil((data.pagination?.count || 0) / perPage));
     } catch (error: any) {
-      showToast(error.message || 'Failed to load groups', 'error')
-      setGroups([])
+      showToast(error.message || "Failed to load groups", "error");
+      setGroups([]);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleGroupClick = (group: Group) => {
-    navigate(`/org/${group.uuid}/assistants`)
-  }
+    navigate(`/org/${group.uuid}/assistants`);
+  };
 
   if (loading && groups.length === 0) {
     return (
@@ -88,7 +90,7 @@ function OrgsPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -98,7 +100,9 @@ function OrgsPage() {
         <div className="orgs-header">
           <h1>Organizations</h1>
           <p className="orgs-subtitle">
-            {totalCount > 0 ? `${totalCount} organization${totalCount !== 1 ? 's' : ''} found` : 'No organizations found'}
+            {totalCount > 0
+              ? `${totalCount} organization${totalCount !== 1 ? "s" : ""} found`
+              : "No organizations found"}
           </p>
         </div>
 
@@ -166,7 +170,9 @@ function OrgsPage() {
                 </span>
                 <button
                   className="pagination-button"
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
                   disabled={currentPage === totalPages || loading}
                 >
                   Next
@@ -177,7 +183,7 @@ function OrgsPage() {
         )}
       </div>
     </div>
-  )
+  );
 }
 
-export default OrgsPage
+export default OrgsPage;

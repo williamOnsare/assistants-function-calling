@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { getKeys, clearKeys, hasKeys } from "../utils/storage";
-import { apiRequest } from "../utils/api";
 import { useToast } from "../hooks/useToast";
 import { ToastContainer } from "../components/Toast";
 import AssistantDetails from "../components/AssistantDetails";

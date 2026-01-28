@@ -28,16 +28,19 @@ chat-assignment-poc/
 ## Setup
 
 1. Install all dependencies:
+
 ```bash
 npm run install-all
 ```
 
 2. Start both server and client:
+
 ```bash
 npm run dev
 ```
 
 Or start them separately:
+
 ```bash
 # Terminal 1 - Backend
 npm run server
@@ -70,6 +73,7 @@ npm run client
 ### Backend (http://localhost:3001)
 
 All endpoints now require API keys in request headers:
+
 - `X-OpenAI-Key` - OpenAI API key
 - `X-ICTLife-Key` - ICTLife API key
 - `X-ICTLife-User-Id` - ICTLife user ID
@@ -106,6 +110,46 @@ All endpoints now require API keys in request headers:
   - Button "Enable Chat Assignment capability" shows an accordion with function schema and "Add Function".
   - The function uses a **two-step flow**: (1) Assistant calls with user_message → system returns list of agents; (2) Assistant selects best match and calls again with selected_agent → server runs assignment and returns confirmation. The Assistant then informs the customer which agent was assigned.
   - Run creation automatically adds `additional_instructions` when the assistant has this function. Frontend handles `requires_action` by calling the function endpoint and submitting tool outputs.
+
+## Deploying to Vercel (full app: frontend + backend)
+
+The app is set up to deploy as a **single Vercel project** (client and server together).
+
+### What’s in place
+
+- **Root directory**: Use the repo root (`./` or `assistants-function-calling`). Do **not** choose `client` or `server` alone.
+- **Build**: Root `npm run build` builds the React client (Vite) into `client/dist`.
+- **Backend**: On Vercel, the Express server in `server/` is run as a serverless function via `src/server.js`, which also serves the built client for `/` and SPA routes. API routes stay under `/api/*`.
+
+### Vercel project settings
+
+In **Build and Output Settings**:
+
+| Setting              | Value                                                                                                         |
+| -------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Framework Preset** | Other                                                                                                         |
+| **Root Directory**   | `./` (leave as repo root)                                                                                     |
+| **Build Command**    | `npm run build` (or leave default; root `package.json` has `build`)                                           |
+| **Output Directory** | Leave empty. The Express app serves the built client; Vercel uses the app in `src/server.js` as the function. |
+| **Install Command**  | `npm run install-all` (so root, server, and client dependencies are installed)                                |
+
+If the UI suggests “Override” toggles, you can set:
+
+- **Install Command**: `npm run install-all`
+- **Build Command**: `npm run build`
+
+### Deploy steps
+
+1. Push the repo to GitHub and [import it as a new Vercel project](https://vercel.com/new).
+2. Set **Root Directory** to the repo root (e.g. `assistants-function-calling` if that’s the root).
+3. Set **Install Command** to `npm run install-all` and **Build Command** to `npm run build`.
+4. (Optional) Add any env vars your server or client need in **Environment Variables** (e.g. for the server; API keys are still sent from the client via headers).
+5. Deploy. The same URL will serve the React app and `/api/*` (e.g. `https://your-project.vercel.app` and `https://your-project.vercel.app/api/health`).
+
+### Local vs Vercel
+
+- **Local**: `npm run dev` runs the Vite dev server (port 3000) and the Express server (port 3001) with the proxy in `client/vite.config.ts`.
+- **Vercel**: One serverless function runs the Express app; it serves the built client from `client/dist` and handles `/api/*`. No separate “output directory” is used for the frontend; the backend serves it.
 
 ## Security Notes
 

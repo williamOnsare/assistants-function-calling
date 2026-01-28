@@ -536,6 +536,11 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// Only start listening when run directly (not when imported by Vercel serverless)
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
+
+export default app;
