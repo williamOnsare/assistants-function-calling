@@ -5,7 +5,7 @@ A demo application showcasing OpenAI Assistants API function call capabilities w
 ## Project Structure
 
 ```
-chat-assignment-poc/
+assistants-function-calling/
 ├── server/              # Node.js backend (plain JavaScript)
 │   ├── server.js        # Express server with API routes
 │   └── package.json
