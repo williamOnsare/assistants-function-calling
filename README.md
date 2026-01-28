@@ -125,13 +125,13 @@ The app is set up to deploy as a **single Vercel project** (client and server to
 
 In **Build and Output Settings**:
 
-| Setting              | Value                                                                                                         |
-| -------------------- | ------------------------------------------------------------------------------------------------------------- |
-| **Framework Preset** | Other                                                                                                         |
-| **Root Directory**   | `./` (leave as repo root)                                                                                     |
-| **Build Command**    | `npm run build` (or leave default; root `package.json` has `build`)                                           |
-| **Output Directory** | Leave empty. The Express app serves the built client; Vercel uses the app in `src/server.js` as the function. |
-| **Install Command**  | `npm run install-all` (so root, server, and client dependencies are installed)                                |
+| Setting              | Value                                                                                                                                                                                                 |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Framework Preset** | Other                                                                                                                                                                                                 |
+| **Root Directory**   | `./` (leave as repo root)                                                                                                                                                                             |
+| **Build Command**    | `npm run build` (or leave default; root `package.json` has `build`)                                                                                                                                   |
+| **Output Directory** | `client/dist` (set in `vercel.json`). Vercel expects a build output; the client build produces this. The Express app in `src/server.js` runs as the serverless function and also serves these assets. |
+| **Install Command**  | `npm run install-all` (so root, server, and client dependencies are installed)                                                                                                                        |
 
 If the UI suggests “Override” toggles, you can set:
 
@@ -149,7 +149,7 @@ If the UI suggests “Override” toggles, you can set:
 ### Local vs Vercel
 
 - **Local**: `npm run dev` runs the Vite dev server (port 3000) and the Express server (port 3001) with the proxy in `client/vite.config.ts`.
-- **Vercel**: One serverless function runs the Express app; it serves the built client from `client/dist` and handles `/api/*`. No separate “output directory” is used for the frontend; the backend serves it.
+- **Vercel**: One serverless function runs the Express app; it serves the built client from `client/dist` and handles `/api/*`. No separate “output directory” is used for the frontend; `vercel.json` sets `outputDirectory` to `client/dist` so the build step passes; the Express app serves those assets.
 
 ## Security Notes
 
