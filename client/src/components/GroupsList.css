@@ -1,0 +1,71 @@
+.groups-list-container {
+  width: 100%;
+  overflow-x: auto;
+  padding: 10px 0;
+}
+
+.groups-list {
+  display: flex;
+  gap: 20px;
+  padding: 10px;
+  min-width: min-content;
+}
+
+.group-card {
+  min-width: 280px;
+  max-width: 280px;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+}
+
+.group-card:hover {
+  border-color: #007bff;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.group-card.selected {
+  border-color: #007bff;
+  background-color: #f0f7ff;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.group-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.group-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.group-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+  word-wrap: break-word;
+}
+
+.group-description {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
